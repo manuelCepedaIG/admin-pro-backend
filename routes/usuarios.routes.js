@@ -1,14 +1,15 @@
-/*
+/**
+ *  Hospitales
+ *  ruta: /api/usuarios
+ */
 
-    RUTA: /api/usuarios
-
-*/
-
+ 
 const { Router } = require('express');
-const { getUsuario, postUsuario, updateUsuario, deleteUsuario } = require('../controllers/usuario.controllers');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
+
+const { getUsuario, postUsuario, updateUsuario, deleteUsuario } = require('../controllers/usuario.controllers');
 
 const router = Router();
 

@@ -1,17 +1,24 @@
-const Usuario = require('../models/usuario');
 const { response } = require('express');
 const bcrypt  = require('bcryptjs');
-const usuario = require('../models/usuario');
 const { generarJWT } = require('../helpers/jwt');
+const UsuarioDTO = require('../models/usuario');
 
+const getUsuario = async(req, res = response) => {
+    const skip = Number(req.query.skip) || 0;
+    const limit = Number(req.query.limit) || 3;
 
-const getUsuario = async(req, res) => {
-    const user = await Usuario.find({}, 'nombre email password role google');
+    const [userList, total] = await Promise.all([
+        UsuarioDTO
+                .find({}, 'nombre email password role google img')
+                .skip(skip)
+                .limit(limit),
+        UsuarioDTO.countDocuments()
+    ]);
 
     res.status(200).json({
         ok: true,
-        usuarios : user,
-        uid: req.uid
+        usuarios : userList,
+        total: total
     });
 };
 
@@ -20,7 +27,7 @@ const postUsuario = async(req, res = response) => {
     const { email, password, nombre } = req.body;
 
     try {
-        const existeEmail = await Usuario.findOne({ email });
+        const existeEmail = await UsuarioDTO.findOne({ email });
         if(existeEmail) {
             return res.status(400).json({
                 ok: false,
@@ -28,7 +35,7 @@ const postUsuario = async(req, res = response) => {
             })
         }
 
-        const user = new Usuario(req.body);
+        const user = new UsuarioDTO(req.body);
 
         // Encriptar contraseña
         const salt = bcrypt.genSaltSync();
@@ -60,7 +67,7 @@ const updateUsuario = async(req, res = response) => {
     const uid = req.params.id;
 
     try {
-        const usuarioDB = await Usuario.findById(uid);
+        const usuarioDB = await UsuarioDTO.findById(uid);
         if(!usuarioDB) {
             return res.status(404).json({
                 ok: false,
@@ -83,7 +90,7 @@ const updateUsuario = async(req, res = response) => {
         }
 
         campos.email = email;
-        const usuarioActualizado = await Usuario.findByIdAndUpdate(uid, campos, { new: true });
+        const usuarioActualizado = await UsuarioDTO.findByIdAndUpdate(uid, campos, { new: true });
 
         res.json({
             ok: true,
@@ -104,7 +111,7 @@ const deleteUsuario = async(req, res = response) => {
     const uid = req.params.id;
 
     try {
-        const usuarioDB = await Usuario.findById(uid);
+        const usuarioDB = await UsuarioDTO.findById(uid);
         if(!usuarioDB) {
             return res.status(404).json({
                 ok: false,
@@ -112,7 +119,7 @@ const deleteUsuario = async(req, res = response) => {
             });
         }
 
-        await Usuario.findByIdAndDelete(uid);
+        await UsuarioDTO.findByIdAndDelete(uid);
 
 
         res.json({
