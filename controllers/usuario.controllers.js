@@ -2,6 +2,7 @@ const { response } = require('express');
 const bcrypt  = require('bcryptjs');
 const { generarJWT } = require('../helpers/jwt');
 const UsuarioDTO = require('../models/usuario');
+const usuario = require('../models/usuario');
 
 const getUsuario = async(req, res = response) => {
     const skip = Number(req.query.skip) || 0;
@@ -75,12 +76,10 @@ const updateUsuario = async(req, res = response) => {
             });
         }
 
-        // TODO: Validar Token y comprobar si el usuario correcto
-
         // Actualizaciones
         const { password, google, email, ...campos } = req.body;
         if( usuarioDB.email !== email) {
-            const existeEmail = await Usuario.findOne({ email: email });
+            const existeEmail = await UsuarioDTO.findOne({ email: email });
             if( existeEmail ) {
                 return res.status(400).json({
                     ok: false,
@@ -89,7 +88,15 @@ const updateUsuario = async(req, res = response) => {
             }
         }
 
-        campos.email = email;
+        if (!usuarioDB.google) {
+            campos.email = email;
+        }
+        else if ( usuarioDB.email !== email) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuarios de google no pueden cambiar su correo'
+            });
+        }
         const usuarioActualizado = await UsuarioDTO.findByIdAndUpdate(uid, campos, { new: true });
 
         res.json({
