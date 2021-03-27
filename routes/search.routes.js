@@ -15,6 +15,6 @@ const {
 const router = Router();
 
 router.get('/:search', validarJWT, getParameter );
-router.get('/:model/:search', validarJWT, getCollection );
+router.get('/:modelType/:search', validarJWT, getCollection );
 
 module.exports = router;

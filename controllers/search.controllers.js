@@ -21,8 +21,8 @@ const getParameter = async(req, res = response) => {
 };
 
 const getCollection = async(req, res = response) => {
+    const searchModel = req.params.modelType;
     const searchParameter = req.params.search;
-    const searchModel = req.params.model;
     const regex = new RegExp(searchParameter, 'i');
     let data = [];
 
