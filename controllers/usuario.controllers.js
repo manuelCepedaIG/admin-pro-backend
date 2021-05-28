@@ -2,7 +2,6 @@ const { response } = require('express');
 const bcrypt  = require('bcryptjs');
 const { generarJWT } = require('../helpers/jwt');
 const UsuarioDTO = require('../models/usuario');
-const usuario = require('../models/usuario');
 
 const getUsuario = async(req, res = response) => {
     const skip = Number(req.query.skip) || 0;
