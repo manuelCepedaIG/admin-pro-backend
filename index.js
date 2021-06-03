@@ -25,7 +25,7 @@ app.use('/api/search', require('./routes/search.routes'));
 app.use('/api/upload', require('./routes/upload.routes'));
 
 app.get('*', (req,res) => {
-    res.sendFile(path.resolve(__dirname,'/public/index.html'));
+    res.sendFile(path.resolve(__dirname,'public/index.html'));
 });
 
 app.listen(process.env.PORT, () => {
