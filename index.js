@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('./database/config');
 const path = require('path');
+const e = require('express');
 
 // crear el servidor de express
 const app = express();
@@ -15,6 +16,9 @@ app.use( express.json() );
 
 // Base de datos
 dbConnection();
+
+// Directorio público
+app.use(express.static('public'));
 
 //Rutas
 app.use('/api/usuarios', require('./routes/usuarios.routes'));
